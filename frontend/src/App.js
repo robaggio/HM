@@ -2,16 +2,22 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [persons, setPersons] = useState([]);
+  const [people, setPeople] = useState([]);
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
 
-  useEffect(() => {
+  // Fetch the list of people when the component mounts
+  const fetchPeople = () => {
     fetch('/api/people/')
       .then(response => response.json())
-      .then(data => setPersons(data));
+      .then(data => setPeople(data));
+  };
+
+  useEffect(() => {
+    fetchPeople();
   }, []);
 
+  // Handle form submission to add a new person
   const handleSubmit = (e) => {
     e.preventDefault();
     fetch('/api/person/', {
@@ -22,10 +28,10 @@ function App() {
       body: JSON.stringify({ name, nickname }),
     })
       .then(response => response.json())
-      .then(data => {
-        setPersons([data, ...persons].slice(0, 10));
+      .then(() => {
         setName('');
         setNickname('');
+        fetchPeople(); // Refetch the list of people after adding a new person
       });
   };
 
@@ -51,7 +57,7 @@ function App() {
           <button type="submit">Add Person</button>
         </form>
         <ul>
-          {persons.map(person => (
+          {people.map(person => (
             <li key={person.id}>{person.name} ({person.nickname})</li>
           ))}
         </ul>
