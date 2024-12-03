@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi.middleware.cors import CORSMiddleware
 
 # Configure logging
@@ -64,8 +64,8 @@ def get_people(limit: int = 10):
 @app.post("/api/person")
 def create_person(person: Person):
     person.id = str(uuid4())
-    person.created_at = datetime.utcnow().isoformat()
-    person.updated_at = datetime.utcnow().isoformat()
+    person.created_at = datetime.now(timezone.utc).isoformat()
+    person.updated_at = datetime.now(timezone.utc).isoformat()
     log.info(f"Creating person {person}")
     with driver.session() as session:
         session.run(
