@@ -9,7 +9,7 @@ import requests
 import logging
 import os
 from dotenv import load_dotenv
-from .auth import Auth
+from .feishu import Feishu
 
 # Load environment variables
 load_dotenv()
@@ -18,8 +18,8 @@ FEISHU_APP_ID = os.getenv("FEISHU_APP_ID")
 FEISHU_APP_SECRET = os.getenv("FEISHU_APP_SECRET")
 FEISHU_HOST = os.getenv("FEISHU_HOST")
 
-# Initialize Auth
-auth = Auth(FEISHU_HOST, FEISHU_APP_ID, FEISHU_APP_SECRET)
+# Initialize Feishu
+auth = Feishu(FEISHU_HOST, FEISHU_APP_ID, FEISHU_APP_SECRET)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -81,7 +81,7 @@ verifier = BasicVerifier(
     auth_http_exception=HTTPException(status_code=403, detail="invalid session"),
 )
 
-def setup_auth_routes(app: FastAPI, auth):
+def setup_auth_routes(app: FastAPI):
     @app.get("/api/auth/callback")
     async def feishu_callback(code: str):
         """Handle Feishu authorization callback"""

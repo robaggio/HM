@@ -1,17 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from neo4j import GraphDatabase
 import os
-# import hashlib
 import time
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from datetime import datetime, timezone
 from fastapi.middleware.cors import CORSMiddleware
-from .auth import Auth
 import requests
 import logging
-from .session_auth import setup_auth_routes, auth
+from .session_auth import setup_auth_routes
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -31,7 +29,7 @@ driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
 # Initialize FastAPI app with auth routes
 app = FastAPI()
-app = setup_auth_routes(app, auth)
+app = setup_auth_routes(app)
 
 # Configure CORS
 app.add_middleware(
