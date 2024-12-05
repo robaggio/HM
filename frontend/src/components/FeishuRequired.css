@@ -1,0 +1,33 @@
+.feishu-required {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.feishu-required-content {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feishu-required-content .material-icons {
+    font-size: 48px;
+    color: #ff4d4f;
+    margin-bottom: 1rem;
+}
+
+.feishu-required-content h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.feishu-required-content p {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+}
