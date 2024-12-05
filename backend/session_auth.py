@@ -86,9 +86,21 @@ def setup_auth_routes(app: FastAPI):
     async def feishu_callback(code: str):
         """Handle Feishu authorization callback"""
         try:
-            # Get user access token and info
-            auth.authorize_user_access_token(code)
-            user_info = auth.get_user_info()
+            # TODO need to comment this before deploy
+            # if code == "mock": use mock data
+            if code == "mock":
+                user_info = {
+                    "avatar_url": "https://s3-imfile.feishucdn.com/static-resource/v1/v3_00gn_e89aea88-3b26-492b-a789-1bc9165f884g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp",
+                    "en_name": "Toby",
+                    "name": "Toby",
+                    "open_id": "ou_f9697445a083cbad6e15c7d71b63eb74",
+                    "tenant_key": "145c3d9f7d0fd75d",
+                    "union_id": "on_86ec337b91935163274083d388e753f9"
+                }
+            else:
+                # Get user access token and info
+                auth.authorize_user_access_token(code)
+                user_info = auth.get_user_info()
 
             # Create new session
             session_id = uuid4()
@@ -101,7 +113,7 @@ def setup_auth_routes(app: FastAPI):
             cookie.attach_to_response(response, session_id)
             
             return response
-
+            
         except requests.exceptions.RequestException as e:
             log.error(f"Request error: {str(e)}")
             raise HTTPException(status_code=500, detail="Failed to communicate with Feishu API")

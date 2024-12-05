@@ -134,7 +134,7 @@ def delete_person(person_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/settings")
-def get_settings(url: str):
+def get_settings():
     # # 接入方前端传来的需要鉴权的网页url
     # ticket = auth.get_ticket()
     # # 当前时间戳，毫秒级
@@ -146,4 +146,4 @@ def get_settings(url: str):
     # signature = hashlib.sha1(verify_str.encode("utf-8")).hexdigest()
     # # 将鉴权所需参数返回给前端
     # return {"appid": FEISHU_APP_ID,"signature": signature,"noncestr": NONCE_STR,"timestamp": timestamp}
-    return {"appid": FEISHU_APP_ID}
+    return {"appid": FEISHU_APP_ID, "mockUser": True}

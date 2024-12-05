@@ -7,7 +7,18 @@
 
 // Initialize Feishu JSSDK and get user info
 export const initFeishuSDK = async (settings) => {
-    console.log("get appid succeed: ", settings.appid);
+    if (settings.mockUser) {
+        return new Promise((resolve, reject) => {
+            fetch(`/api/auth/callback?code=mock`).then(response2 => response2.json().then(res2 => {
+                //console.log("getUserInfo succeed",res2);
+                resolve({
+                    success: true,
+                    userInfo: res2
+                });
+            }))
+        });
+        
+    }
     if (!window.h5sdk) {
         console.error('Please open in Feishu');
         return {
@@ -49,7 +60,7 @@ export const initFeishuSDK = async (settings) => {
                     // 此处通过fetch把code传递给接入方服务端Route: callback，并获得user_info
                     // 服务端Route: callback的具体内容请参阅服务端模块server.py的callback()函数
                     fetch(`/api/auth/callback?code=${res.code}`).then(response2 => response2.json().then(res2 => {
-                        console.log("getUserInfo succeed");
+                        //console.log("getUserInfo succeed");
                         resolve({
                             success: true,
                             userInfo: res2

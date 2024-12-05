@@ -15,8 +15,7 @@ function App() {
   useEffect(() => {
     const setupFeishu = async () => {
       try {
-        const url = encodeURIComponent(window.location.href.split("#")[0]);
-        const response = await fetch(`/api/settings?url=${url}`);
+        const response = await fetch(`/api/settings`);
         const settings = await response.json();
         if (!settings.appid) {
           console.error('No appid found in settings');
@@ -26,7 +25,7 @@ function App() {
         const result = await initFeishuSDK(settings);
         if (result.success) {
           setUserInfo(result.userInfo);
-          console.log('User info3:', result.userInfo);
+          console.log('User info:', result.userInfo);
           // Fetch people data only after successful Feishu initialization
           const response = await fetch('/api/people/');
           const data = await response.json();
@@ -34,7 +33,7 @@ function App() {
         }
       } catch (err) {
         console.error('Error in setupFeishu:', err);
-      } finally {
+      } finally { 
         setIsLoading(false);
       }
     };
