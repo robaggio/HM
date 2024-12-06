@@ -18,3 +18,9 @@ class Person(BaseModel):
     nickname: str = None
     created_at: str = None
     updated_at: str = None
+
+class InboxMessage(BaseModel):
+    id: str = None  # Neo4j node ID
+    date: str
+    text: str
+    read: bool = False

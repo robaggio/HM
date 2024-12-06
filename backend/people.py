@@ -8,7 +8,7 @@ from .models import Person
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-def setup_people_routes(app: FastAPI, verifier):
+def setup_people_routes(app: FastAPI, verifier, cookie):
     @app.get("/api/people/")
     def get_people(limit: int = 10):
         try:

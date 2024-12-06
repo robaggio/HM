@@ -11,6 +11,21 @@ function App() {
   const [activeTab, setActiveTab] = useState('inbox');
   const [isLoading, setIsLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
+  const [inboxMessages, setInboxMessages] = useState([]);
+  const [isPeopleLoading, setIsPeopleLoading] = useState(false);
+
+  const fetchPeople = async () => {
+    try {
+      setIsPeopleLoading(true);
+      const response = await fetch('/api/people/');
+      const data = await response.json();
+      setPeople(data);
+    } catch (err) {
+      console.error('Error fetching people:', err);
+    } finally {
+      setIsPeopleLoading(false);
+    }
+  };
 
   useEffect(() => {
     const setupFeishu = async () => {
@@ -26,10 +41,10 @@ function App() {
         if (result.success) {
           setUserInfo(result.userInfo);
           console.log('User info:', result.userInfo);
-          // Fetch people data only after successful Feishu initialization
-          const response = await fetch('/api/people/');
-          const data = await response.json();
-          setPeople(data);
+          // fetch the inbox messages
+          const inboxResponse = await fetch('/api/inbox');
+          const inboxData = await inboxResponse.json();
+          setInboxMessages(inboxData);
         }
       } catch (err) {
         console.error('Error in setupFeishu:', err);
@@ -40,6 +55,13 @@ function App() {
 
     setupFeishu();
   }, []);
+
+  // Fetch people data when switching to the search tab
+  useEffect(() => {
+    if (activeTab === 'search') {
+      fetchPeople();
+    }
+  }, [activeTab]);
 
   if (isLoading) {
     return <div className="loading">Loading...</div>;
@@ -52,7 +74,7 @@ function App() {
   // Handle form submission to add a new person
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('/api/person/', {
+    fetch('/api/people/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,9 +85,7 @@ function App() {
       .then(() => {
         setName('');
         setNickname('');
-        fetch('/api/people/')
-          .then(response => response.json())
-          .then(data => setPeople(data));
+        fetchPeople();
       });
   };
 
@@ -84,9 +104,7 @@ function App() {
       .then(response => response.json())
       .then(() => {
         setEditingPerson(null);
-        fetch('/api/people/')
-          .then(response => response.json())
-          .then(data => setPeople(data));
+        fetchPeople();
       });
   };
 
@@ -97,9 +115,7 @@ function App() {
         method: 'DELETE',
       })
         .then(() => {
-          fetch('/api/people/')
-            .then(response => response.json())
-            .then(data => setPeople(data));
+          fetchPeople();
         });
     }
   };
@@ -110,71 +126,32 @@ function App() {
         return (
           <div className="tab-content">
             <header className="App-header">
-              <h1>Person List</h1>
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Nickname"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  required
-                />
-                <button type="submit">Add Person</button>
-              </form>
-              <ul>
-                {people.map(person => (
-                  <li key={person.id}>
-                    {editingPerson?.id === person.id ? (
-                      <div>
-                        <input
-                          type="text"
-                          value={editingPerson.name}
-                          onChange={(e) => setEditingPerson({
-                            ...editingPerson,
-                            name: e.target.value
-                          })}
-                        />
-                        <input
-                          type="text"
-                          value={editingPerson.nickname}
-                          onChange={(e) => setEditingPerson({
-                            ...editingPerson,
-                            nickname: e.target.value
-                          })}
-                        />
-                        <button onClick={() => handleUpdate(editingPerson)}>Save</button>
-                        <button onClick={() => setEditingPerson(null)}>Cancel</button>
-                      </div>
-                    ) : (
-                      <div>
-                        {person.name} ({person.nickname})
-                        <button onClick={() => setEditingPerson(person)}>Edit</button>
-                        <button onClick={() => handleDelete(person.id)}>Delete</button>
-                      </div>
-                    )}
-                  </li>
+              <h1>Inbox</h1>
+              <div className="messages-list">
+                {inboxMessages.map(message => (
+                  <div key={message.id} className="message-card">
+                    <div className="message-header">
+                      <span className="message-date">
+                        {new Date(message.date).toLocaleString()}
+                      </span>
+                      {!message.read && <span className="unread-badge">●</span>}
+                    </div>
+                    <div className="message-text">{message.text}</div>
+                  </div>
                 ))}
-              </ul>
+                {inboxMessages.length === 0 && (
+                  <div className="no-messages">No messages yet</div>
+                )}
+              </div>
             </header>
           </div>
         );
       case 'search':
-        return <div className="tab-content">Search Content Coming Soon</div>;
-      case 'me':
-        return <div className="tab-content">Me Content Coming Soon</div>;
-      default:
         return (
           <div className="tab-content">
             <header className="App-header">
-              <h1>Person List</h1>
-              <form onSubmit={handleSubmit}>
+              <h1>People List</h1>
+              <form onSubmit={handleSubmit} className="add-person-form">
                 <input
                   type="text"
                   placeholder="Name"
@@ -191,43 +168,58 @@ function App() {
                 />
                 <button type="submit">Add Person</button>
               </form>
-              <ul>
-                {people.map(person => (
-                  <li key={person.id}>
-                    {editingPerson?.id === person.id ? (
-                      <div>
-                        <input
-                          type="text"
-                          value={editingPerson.name}
-                          onChange={(e) => setEditingPerson({
-                            ...editingPerson,
-                            name: e.target.value
-                          })}
-                        />
-                        <input
-                          type="text"
-                          value={editingPerson.nickname}
-                          onChange={(e) => setEditingPerson({
-                            ...editingPerson,
-                            nickname: e.target.value
-                          })}
-                        />
-                        <button onClick={() => handleUpdate(editingPerson)}>Save</button>
-                        <button onClick={() => setEditingPerson(null)}>Cancel</button>
+              <div className="people-list">
+                {isPeopleLoading ? (
+                  <div className="loading-people">Loading people...</div>
+                ) : (
+                  <>
+                    {people.map(person => (
+                      <div key={person.id} className="person-card">
+                        {editingPerson?.id === person.id ? (
+                          <div className="edit-form">
+                            <input
+                              type="text"
+                              value={editingPerson.name}
+                              onChange={(e) => setEditingPerson({
+                                ...editingPerson,
+                                name: e.target.value
+                              })}
+                            />
+                            <input
+                              type="text"
+                              value={editingPerson.nickname}
+                              onChange={(e) => setEditingPerson({
+                                ...editingPerson,
+                                nickname: e.target.value
+                              })}
+                            />
+                            <div className="button-group">
+                              <button onClick={() => handleUpdate(editingPerson)}>Save</button>
+                              <button onClick={() => setEditingPerson(null)}>Cancel</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="person-info">
+                            <div className="person-name">{person.name}</div>
+                            <div className="person-nickname">{person.nickname}</div>
+                            <div className="button-group">
+                              <button onClick={() => setEditingPerson(person)}>Edit</button>
+                              <button onClick={() => handleDelete(person.id)}>Delete</button>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div>
-                        {person.name} ({person.nickname})
-                        <button onClick={() => setEditingPerson(person)}>Edit</button>
-                        <button onClick={() => handleDelete(person.id)}>Delete</button>
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
+                    ))}
+                  </>
+                )}
+              </div>
             </header>
           </div>
         );
+      case 'me':
+        return <div className="tab-content">Me Content Coming Soon</div>;
+      default:
+        return null;
     }
   };
 

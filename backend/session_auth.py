@@ -31,8 +31,8 @@ cookie_params = CookieParameters()
 
 # Use UUID4 (random) as session ID
 cookie = SessionCookie(
-    cookie_name="feishu_session",
-    identifier="general_verifier",
+    cookie_name="session",
+    identifier="session",
     auto_error=True,
     secret_key="HIKE",  # In production, use a proper secret key
     cookie_params=cookie_params
@@ -71,17 +71,37 @@ class BasicVerifier(SessionVerifier[UUID, SessionData]):
         return self._auth_http_exception
 
     def verify_session(self, model: SessionData) -> bool:
-        """If the session exists, it is valid"""
+        """Verify session integrity and validity"""
+        log.info(f"Verifying session: {model}")
+        
+        # Check if session data exists
+        if not model or not model.user_info:
+            log.warning("Empty or invalid session data")
+            return False
+        
+        # Check for required user info fields
+        required_fields = ['open_id', 'name']
+        for field in required_fields:
+            if field not in model.user_info:
+                log.warning(f"Missing required field: {field}")
+                return False
+        
+        # Optional: Add time-based session expiration
+        # current_time = datetime.now(timezone.utc)
+        # if (current_time - model.created_at) > timedelta(hours=24):
+        #     log.warning("Session expired")
+        #     return False
+        
         return True
 
 verifier = BasicVerifier(
-    identifier="general_verifier",
-    auto_error=True,
+    identifier="session",
+    auto_error=False,
     backend=backend,
     auth_http_exception=HTTPException(status_code=403, detail="invalid session"),
 )
 
-def setup_auth_routes(app: FastAPI, verifier):
+def setup_auth_routes(app: FastAPI):
     @app.get("/api/auth/callback")
     async def feishu_callback(code: str):
         """Handle Feishu authorization callback"""
