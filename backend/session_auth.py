@@ -4,16 +4,17 @@ from fastapi_sessions.backends.implementations import InMemoryBackend
 from fastapi_sessions.session_verifier import SessionVerifier
 from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 from uuid import UUID, uuid4
-from pydantic import BaseModel
 import requests
 import logging
 import os
 from dotenv import load_dotenv
 from .feishu import Feishu
+from .db import driver
+from .user import get_or_create_user
+from .models import SessionData
 
 # Load environment variables
 load_dotenv()
-# Get environment variables
 FEISHU_APP_ID = os.getenv("FEISHU_APP_ID")
 FEISHU_APP_SECRET = os.getenv("FEISHU_APP_SECRET")
 FEISHU_HOST = os.getenv("FEISHU_HOST")
@@ -25,20 +26,19 @@ auth = Feishu(FEISHU_HOST, FEISHU_APP_ID, FEISHU_APP_SECRET)
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-# Session configuration
+# Configure cookie parameters
 cookie_params = CookieParameters()
+
+# Use UUID4 (random) as session ID
 cookie = SessionCookie(
     cookie_name="feishu_session",
     identifier="general_verifier",
     auto_error=True,
-    secret_key="CHANGE_THIS_TO_A_SECRET_KEY",  # In production, use a proper secret key
+    secret_key="HIKE",  # In production, use a proper secret key
     cookie_params=cookie_params
 )
 
-backend = InMemoryBackend()
-
-class SessionData(BaseModel):
-    user_info: dict
+backend = InMemoryBackend[UUID, SessionData]()
 
 class BasicVerifier(SessionVerifier[UUID, SessionData]):
     def __init__(
@@ -46,7 +46,7 @@ class BasicVerifier(SessionVerifier[UUID, SessionData]):
         *,
         identifier: str,
         auto_error: bool,
-        backend: InMemoryBackend,
+        backend: InMemoryBackend[UUID, SessionData],
         auth_http_exception: HTTPException,
     ):
         self._identifier = identifier
@@ -81,7 +81,7 @@ verifier = BasicVerifier(
     auth_http_exception=HTTPException(status_code=403, detail="invalid session"),
 )
 
-def setup_auth_routes(app: FastAPI):
+def setup_auth_routes(app: FastAPI, verifier):
     @app.get("/api/auth/callback")
     async def feishu_callback(code: str):
         """Handle Feishu authorization callback"""
@@ -101,6 +101,16 @@ def setup_auth_routes(app: FastAPI):
                 # Get user access token and info
                 auth.authorize_user_access_token(code)
                 user_info = auth.get_user_info()
+
+            # Create or update user in database
+            with driver.session() as session:
+                db_user = get_or_create_user(session, user_info)
+                # Add database user info to the user_info dict
+                user_info.update({
+                    "level": db_user["level"],
+                    "created_at": db_user["created_at"],
+                    "last_login_at": db_user["last_login_at"]
+                })
 
             # Create new session
             session_id = uuid4()

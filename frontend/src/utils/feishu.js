@@ -7,7 +7,7 @@
 
 // Initialize Feishu JSSDK and get user info
 export const initFeishuSDK = async (settings) => {
-    if (settings.mockUser) {
+    if (settings.mock_user) {
         return new Promise((resolve, reject) => {
             fetch(`/api/auth/callback?code=mock`).then(response2 => response2.json().then(res2 => {
                 //console.log("getUserInfo succeed",res2);
