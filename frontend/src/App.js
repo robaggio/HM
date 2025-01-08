@@ -125,25 +125,31 @@ function App() {
       case 'inbox':
         return (
           <div className="tab-content">
-            <header className="App-header">
-              <h1>Inbox</h1>
-              <div className="messages-list">
-                {inboxMessages.map(message => (
-                  <div key={message.id} className="message-card">
-                    <div className="message-header">
-                      <span className="message-date">
-                        {new Date(message.date).toLocaleString()}
-                      </span>
-                      {!message.read && <span className="unread-badge">●</span>}
+            <div className="messages-list">
+              {inboxMessages.map(message => (
+                <div key={message.id} className="message-card">
+                  <div className="message-header">
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      {!message.read && <span className="unread-badge" />}
+                      <span className="message-sender">{message.sender || 'System'}</span>
                     </div>
-                    <div className="message-text">{message.text}</div>
+                    <span className="message-date">
+                      {new Date(message.date).toLocaleDateString()}
+                    </span>
                   </div>
-                ))}
-                {inboxMessages.length === 0 && (
-                  <div className="no-messages">No messages yet</div>
-                )}
-              </div>
-            </header>
+                  <div className="message-subject">{message.subject || 'No Subject'}</div>
+                  <div className="message-text">{message.text}</div>
+                </div>
+              ))}
+              {inboxMessages.length === 0 && (
+                <div className="no-messages">
+                  <span className="material-icons" style={{ fontSize: 48, color: '#ccc', marginBottom: 16 }}>
+                    inbox
+                  </span>
+                  <div>Your inbox is empty</div>
+                </div>
+              )}
+            </div>
           </div>
         );
       case 'search':
@@ -228,7 +234,14 @@ function App() {
       <header className="header">
         {userInfo && (
           <div className="user-info">
-            <img src={userInfo.avatarUrl} alt="User avatar" className="avatar" />
+            <img 
+              src={userInfo.avatar_url} 
+              alt="User avatar" 
+              className="avatar"
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/32';
+              }}
+            />
             <span>Welcome, {userInfo.name}</span>
           </div>
         )}

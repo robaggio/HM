@@ -24,3 +24,4 @@ class InboxMessage(BaseModel):
     date: str
     text: str
     read: bool = False
+    message_type: str = 'system'
