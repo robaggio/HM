@@ -131,13 +131,12 @@ function App() {
                   <div className="message-header">
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       {!message.read && <span className="unread-badge" />}
-                      <span className="message-sender">{message.sender || 'System'}</span>
+                      <span className="message-sender">{message.message_type || 'System'}</span>
                     </div>
                     <span className="message-date">
                       {new Date(message.date).toLocaleDateString()}
                     </span>
                   </div>
-                  <div className="message-subject">{message.subject || 'No Subject'}</div>
                   <div className="message-text">{message.text}</div>
                 </div>
               ))}

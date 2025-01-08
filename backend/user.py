@@ -40,7 +40,8 @@ def get_or_create_user(session, user_info):
             CREATE (m:InboxMessage {
                 date: $now,
                 text: $welcome_text,
-                read: false
+                read: false,
+                message_type: 'System'
             })
             CREATE (u)-[:HAS_MESSAGE]->(m)
             RETURN elementId(u) as id, u.name as name, u.open_id as open_id,
