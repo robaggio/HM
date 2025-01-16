@@ -75,10 +75,6 @@
   background-color: rgba(33, 150, 243, 0.1);
 }
 
-.nav-button.active .material-icons {
-  color: #2196F3;
-}
-
 /* Safe area padding for modern mobile devices */
 @supports (padding: max(0px)) {
   .bottom-nav {

@@ -56,9 +56,9 @@ function App() {
     setupFeishu();
   }, []);
 
-  // Fetch people data when switching to the search tab
+  // Fetch people data when switching to the network tab
   useEffect(() => {
-    if (activeTab === 'search') {
+    if (activeTab === 'network') {
       fetchPeople();
     }
   }, [activeTab]);
@@ -151,11 +151,9 @@ function App() {
             </div>
           </div>
         );
-      case 'search':
+      case 'network':
         return (
           <div className="tab-content">
-            <header className="App-header">
-              <h1>People List</h1>
               <form onSubmit={handleSubmit} className="add-person-form">
                 <input
                   type="text"
@@ -218,7 +216,6 @@ function App() {
                   </>
                 )}
               </div>
-            </header>
           </div>
         );
       case 'me':
@@ -230,21 +227,6 @@ function App() {
 
   return (
     <div className="app">
-      <header className="header">
-        {userInfo && (
-          <div className="user-info">
-            <img 
-              src={userInfo.avatar_url} 
-              alt="User avatar" 
-              className="avatar"
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/32';
-              }}
-            />
-            <span>Welcome, {userInfo.name}</span>
-          </div>
-        )}
-      </header>
 
       <main className="main-content">
         {renderContent()}
@@ -259,18 +241,30 @@ function App() {
           <span className="nav-label">Inbox</span>
         </button>
         <button
-          className={`nav-button ${activeTab === 'search' ? 'active' : ''}`}
-          onClick={() => setActiveTab('search')}
+          className={`nav-button ${activeTab === 'network' ? 'active' : ''}`}
+          onClick={() => setActiveTab('network')}
         >
-          <span className="material-icons">search</span>
-          <span className="nav-label">Search</span>
+          <span className="material-icons">people</span>
+          <span className="nav-label">Network</span>
         </button>
         <button
           className={`nav-button ${activeTab === 'me' ? 'active' : ''}`}
           onClick={() => setActiveTab('me')}
         >
-          <span className="material-icons">person</span>
-          <span className="nav-label">Me</span>
+          {userInfo && userInfo.avatar_url ? (
+            <img 
+              src={userInfo.avatar_url} 
+              alt="Profile" 
+              className="avatar"
+              style={{ width: '28px', height: '28px', borderRadius: '50%' }}
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/28';
+              }}
+            />
+          ) : (
+            <span className="material-icons">person</span>
+          )}
+          <span className="nav-label">{userInfo ? userInfo.name : 'Me'}</span>
         </button>
       </nav>
     </div>
