@@ -7,12 +7,12 @@ function App() {
   const [people, setPeople] = useState([]);
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
-  const [editingPerson, setEditingPerson] = useState(null);
   const [activeTab, setActiveTab] = useState('inbox');
   const [isLoading, setIsLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
   const [inboxMessages, setInboxMessages] = useState([]);
   const [isPeopleLoading, setIsPeopleLoading] = useState(false);
+  const [showAddPersonModal, setShowAddPersonModal] = useState(false);
 
   const fetchPeople = async () => {
     try {
@@ -86,38 +86,8 @@ function App() {
         setName('');
         setNickname('');
         fetchPeople();
+        setShowAddPersonModal(false);
       });
-  };
-
-  // Handle updating a person
-  const handleUpdate = (person) => {
-    fetch(`/api/people/${person.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: person.name,
-        nickname: person.nickname,
-      }),
-    })
-      .then(response => response.json())
-      .then(() => {
-        setEditingPerson(null);
-        fetchPeople();
-      });
-  };
-
-  // Handle deleting a person
-  const handleDelete = (personId) => {
-    if (window.confirm('Are you sure you want to delete this person?')) {
-      fetch(`/api/people/${personId}`, {
-        method: 'DELETE',
-      })
-        .then(() => {
-          fetchPeople();
-        });
-    }
   };
 
   const renderContent = () => {
@@ -154,68 +124,72 @@ function App() {
       case 'network':
         return (
           <div className="tab-content">
-              <form onSubmit={handleSubmit} className="add-person-form">
-                <input
-                  type="text"
-                  placeholder="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Nickname"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  required
-                />
-                <button type="submit">Add Person</button>
-              </form>
-              <div className="people-list">
-                {isPeopleLoading ? (
-                  <div className="loading-people">Loading people...</div>
-                ) : (
-                  <>
-                    {people.map(person => (
-                      <div key={person.id} className="person-card">
-                        {editingPerson?.id === person.id ? (
-                          <div className="edit-form">
-                            <input
-                              type="text"
-                              value={editingPerson.name}
-                              onChange={(e) => setEditingPerson({
-                                ...editingPerson,
-                                name: e.target.value
-                              })}
-                            />
-                            <input
-                              type="text"
-                              value={editingPerson.nickname}
-                              onChange={(e) => setEditingPerson({
-                                ...editingPerson,
-                                nickname: e.target.value
-                              })}
-                            />
-                            <div className="button-group">
-                              <button onClick={() => handleUpdate(editingPerson)}>Save</button>
-                              <button onClick={() => setEditingPerson(null)}>Cancel</button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="person-info">
-                            <div className="person-name">{person.name}</div>
-                            <div className="person-nickname">{person.nickname}</div>
-                            <div className="button-group">
-                              <button onClick={() => setEditingPerson(person)}>Edit</button>
-                              <button onClick={() => handleDelete(person.id)}>Delete</button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </>
-                )}
+            <div className="network-actions">
+              <button 
+                className="network-action-button"
+                onClick={() => setShowAddPersonModal(true)}
+              >
+                <span className="material-icons">person_add</span>
+                Person
+              </button>
+              <button 
+                className="network-action-button"
+                onClick={() => alert('Coming soon')}
+              >
+                <span className="material-icons">group_add</span>
+                Unit
+              </button>
+            </div>
+            
+            {showAddPersonModal && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <h3>Add New Person</h3>
+                  <form onSubmit={handleSubmit} className="add-person-form">
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Nickname"
+                      value={nickname}
+                      onChange={(e) => setNickname(e.target.value)}
+                      required
+                    />
+                    <div className="modal-buttons">
+                      <button type="submit">Add</button>
+                      <button 
+                        type="button"
+                        onClick={() => setShowAddPersonModal(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
+            )}
+            <h3>Recent People</h3>
+            <div className="people-list">
+              {isPeopleLoading ? (
+                <div className="loading-people">Loading people...</div>
+              ) : (
+                <>
+                  {people.map(person => (
+                    <div key={person.id} className="person-card">
+                      <div className="person-info">
+                        <div className="person-name">{person.name}</div>
+                        <div className="person-nickname">{person.nickname}</div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
           </div>
         );
       case 'me':

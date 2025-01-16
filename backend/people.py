@@ -25,7 +25,7 @@ def setup_people_routes(app: FastAPI, verifier, cookie):
             log.error(f"Error fetching people: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
 
-    @app.post("/api/people")
+    @app.post("/api/people/")
     def create_person(person: Person):
         try:
             with driver.session() as session:
