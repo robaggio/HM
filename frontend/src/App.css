@@ -28,6 +28,7 @@
   align-items: center;
   color: #333;
   font-size: 16px;
+  padding: 8px;
 }
 
 .bottom-nav {
@@ -330,7 +331,6 @@ li button:last-child:hover {
 .network-actions {
   display: flex;
   gap: 8px;
-  padding: 8px;
   width: 100%;
   max-width: 600px;
   justify-content: space-between;   
@@ -473,4 +473,32 @@ li button:last-child:hover {
 .person-nickname {
   color: #666;
   font-size: 0.9em;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+}
+
+.loading-spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

@@ -100,7 +100,8 @@ def setup_user_routes(router: APIRouter, verifier):
                 result = session.run(
                     """
                     MATCH (u:User {open_id: $open_id})-[:HAS_MESSAGE]->(m:InboxMessage)
-                    RETURN elementId(m) as id, m.date as date, m.text as text, m.read as read
+                    RETURN elementId(m) as id, m.date as date, m.text as text, m.read as read,
+                           m.message_type as message_type
                     ORDER BY m.date DESC
                     LIMIT 20
                     """,
@@ -109,5 +110,29 @@ def setup_user_routes(router: APIRouter, verifier):
                 return [dict(record) for record in result]
         except Exception as e:
             log.error(f"Error getting inbox messages: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @router.post("/user/inbox/{message_id}/read")
+    async def mark_message_as_read(message_id: str, session_data: SessionData = Depends(verifier)):
+        """Mark a message as read"""
+        try:
+            with driver.session() as session:
+                result = session.run(
+                    """
+                    MATCH (u:User {open_id: $open_id})-[:HAS_MESSAGE]->(m:InboxMessage)
+                    WHERE elementId(m) = $message_id AND m.read = false
+                    SET m.read = true
+                    RETURN elementId(m) as id, m.date as date, m.text as text, m.read as read,
+                           m.message_type as message_type
+                    """,
+                    open_id=session_data.user_info["open_id"],
+                    message_id=message_id
+                )
+                record = result.single()
+                if not record:
+                    raise HTTPException(status_code=404, detail="Message not found or already read")
+                return dict(record)
+        except Exception as e:
+            log.error(f"Error marking message as read: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
 

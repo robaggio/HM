@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 
 const NetworkTab = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
   const [showAddPersonModal, setShowAddPersonModal] = useState(false);
@@ -56,25 +58,51 @@ const NetworkTab = () => {
       });
   };
 
+  const handlePersonClick = (personId) => {
+    navigate(`/people/${personId}`);
+  };
+
   return (
     <div className="tab-content">
-      <div className="network-actions">
-        <button 
-          className="network-action-button"
-          onClick={() => setShowAddPersonModal(true)}
-        >
-          <span className="material-icons">person_add</span>
-          Person {networkStats && `(${networkStats.total_people})`}
-        </button>
-        <button 
-          className="network-action-button"
-          onClick={() => alert('Coming soon')}
-        >
-          <span className="material-icons">group_add</span>
-          Unit
-        </button>
+        <div className="network-actions">
+          <button 
+            className="network-action-button"
+            onClick={() => setShowAddPersonModal(true)}
+          >
+            <span className="material-icons">person_add</span>
+            Person {networkStats && `(${networkStats.total_people})`}
+          </button>
+          <button 
+            className="network-action-button"
+            onClick={() => alert('Coming soon')}
+          >
+            <span className="material-icons">group_add</span>
+            Unit
+          </button>
+        </div>
+        <h3>Recent People</h3>
+
+      <div className="network-content">
+        {isPeopleLoading ? (
+          <div className="loading-people">Loading people...</div>
+        ) : (
+          <div className="people-list">
+            {people.map(person => (
+              <div 
+                key={person.id} 
+                className="person-card"
+                onClick={() => handlePersonClick(person.id)}
+              >
+                <div className="person-info">
+                  <div className="person-name">{person.name}</div>
+                  <div className="person-nickname">{person.nickname}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      
+
       {showAddPersonModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -107,23 +135,6 @@ const NetworkTab = () => {
           </div>
         </div>
       )}
-      <h3>Recent People</h3>
-      <div className="people-list">
-        {isPeopleLoading ? (
-          <div className="loading-people">Loading people...</div>
-        ) : (
-          <>
-            {people.map(person => (
-              <div key={person.id} className="person-card">
-                <div className="person-info">
-                  <div className="person-name">{person.name}</div>
-                  <div className="person-nickname">{person.nickname}</div>
-                </div>
-              </div>
-            ))}
-          </>
-        )}
-      </div>
     </div>
   );
 };

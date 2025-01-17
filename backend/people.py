@@ -25,6 +25,28 @@ def setup_people_routes(router: APIRouter):
             log.error(f"Error fetching people: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
 
+    @router.get("/people/{person_id}")
+    def get_person(person_id: str):
+        """Get a single person's details"""
+        try:
+            with driver.session() as session:
+                result = session.run(
+                    """
+                    MATCH (p:Person)
+                    WHERE elementId(p) = $person_id
+                    RETURN elementId(p) as id, p.name as name, p.nickname as nickname,
+                           p.created_at as created_at, p.updated_at as updated_at
+                    """,
+                    person_id=person_id
+                )
+                record = result.single()
+                if not record:
+                    raise HTTPException(status_code=404, detail="Person not found")
+                return dict(record)
+        except Exception as e:
+            log.error(f"Error fetching person details: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
+
     @router.post("/people/")
     def create_person(person: Person):
         try:
