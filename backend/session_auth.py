@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter, Depends
 from fastapi.responses import JSONResponse
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from fastapi_sessions.session_verifier import SessionVerifier
@@ -102,7 +102,7 @@ verifier = BasicVerifier(
 )
 
 def setup_auth_routes(app: FastAPI):
-    @app.get("/api/auth/callback")
+    @app.get("/api/public/auth/callback")
     async def feishu_callback(code: str):
         """Handle Feishu authorization callback"""
         try:
@@ -152,3 +152,11 @@ def setup_auth_routes(app: FastAPI):
             raise HTTPException(status_code=500, detail=str(e))
 
     return app
+
+def create_protected_router(prefix: str = "") -> APIRouter:
+    """
+    创建一个受保护的路由组，所有路由都会自动添加会话验证
+    """
+    router = APIRouter(prefix=prefix)
+    router.dependencies = [Depends(cookie), Depends(verifier)]
+    return router

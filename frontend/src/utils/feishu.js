@@ -9,7 +9,7 @@
 export const initFeishuSDK = async (settings) => {
     if (settings.mock_user) {
         return new Promise((resolve, reject) => {
-            fetch(`/api/auth/callback?code=mock`).then(response2 => response2.json().then(res2 => {
+            fetch(`/api/public/auth/callback?code=mock`).then(response2 => response2.json().then(res2 => {
                 //console.log("getUserInfo succeed",res2);
                 resolve({
                     success: true,
@@ -59,7 +59,7 @@ export const initFeishuSDK = async (settings) => {
                     //authorization code 存储在 res.code
                     // 此处通过fetch把code传递给接入方服务端Route: callback，并获得user_info
                     // 服务端Route: callback的具体内容请参阅服务端模块server.py的callback()函数
-                    fetch(`/api/auth/callback?code=${res.code}`).then(response2 => response2.json().then(res2 => {
+                    fetch(`/api/public/auth/callback?code=${res.code}`).then(response2 => response2.json().then(res2 => {
                         //console.log("getUserInfo succeed");
                         resolve({
                             success: true,

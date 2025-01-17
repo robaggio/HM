@@ -5,10 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from .db import driver
-from .session_auth import cookie, verifier, setup_auth_routes
+from .session_auth import verifier, create_protected_router, setup_auth_routes
 from .user import setup_user_routes
 from .people import setup_people_routes
-from .models import SessionData
+from .network import setup_network_routes
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -30,18 +30,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@app.get("/api/public/hello")
 def read_root():
     with driver.session() as session:
         result = session.run("MATCH (n) RETURN 'Hello from Neo4j!' as message")
         message = result.single()["message"]
     return {"message": message}
 
-@app.get("/api/settings")
+@app.get("/api/public/settings")
 def get_settings():
     return {"appid": FEISHU_APP_ID, "mock_user": True}
 
 # Setup routes
 setup_auth_routes(app)
-setup_user_routes(app, verifier, cookie)
-setup_people_routes(app, verifier, cookie)
+# Below are protected routes    
+router = create_protected_router("/api/private")
+setup_user_routes(router,verifier)
+setup_people_routes(router)
+setup_network_routes(router)
+app.include_router(router)

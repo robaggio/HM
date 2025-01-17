@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import APIRouter, FastAPI, HTTPException, Depends
 from datetime import datetime, timezone
 import logging
 from .db import driver
@@ -68,8 +68,8 @@ def get_or_create_user(session, user_info):
     
     return dict(user)
 
-def setup_user_routes(app: FastAPI, verifier, cookie):
-    @app.get("/api/users/me")
+def setup_user_routes(router: APIRouter, verifier):
+    @router.get("/user/me")
     async def get_current_user(session_data: SessionData = Depends(verifier)):
         """Get the current user's information"""
         try:
@@ -92,7 +92,7 @@ def setup_user_routes(app: FastAPI, verifier, cookie):
             log.error(f"Error getting current user: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
 
-    @app.get("/api/inbox", response_model=List[InboxMessage], dependencies=[Depends(cookie)])
+    @router.get("/user/inbox", response_model=List[InboxMessage])
     async def get_inbox_messages(session_data: SessionData = Depends(verifier)):
         """Get the 20 newest inbox messages for the current user"""
         try:
@@ -111,4 +111,3 @@ def setup_user_routes(app: FastAPI, verifier, cookie):
             log.error(f"Error getting inbox messages: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
 
-    return app

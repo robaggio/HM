@@ -2,35 +2,19 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { initFeishuSDK } from './utils/feishu';
 import FeishuRequired from './components/FeishuRequired';
+import InboxTab from './components/InboxTab';
+import NetworkTab from './components/NetworkTab';
+import MeTab from './components/MeTab';
 
 function App() {
-  const [people, setPeople] = useState([]);
-  const [name, setName] = useState('');
-  const [nickname, setNickname] = useState('');
   const [activeTab, setActiveTab] = useState('inbox');
   const [isLoading, setIsLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
-  const [inboxMessages, setInboxMessages] = useState([]);
-  const [isPeopleLoading, setIsPeopleLoading] = useState(false);
-  const [showAddPersonModal, setShowAddPersonModal] = useState(false);
-
-  const fetchPeople = async () => {
-    try {
-      setIsPeopleLoading(true);
-      const response = await fetch('/api/people/');
-      const data = await response.json();
-      setPeople(data);
-    } catch (err) {
-      console.error('Error fetching people:', err);
-    } finally {
-      setIsPeopleLoading(false);
-    }
-  };
 
   useEffect(() => {
     const setupFeishu = async () => {
       try {
-        const response = await fetch(`/api/settings`);
+        const response = await fetch(`/api/public/settings`);
         const settings = await response.json();
         if (!settings.appid) {
           console.error('No appid found in settings');
@@ -41,10 +25,6 @@ function App() {
         if (result.success) {
           setUserInfo(result.userInfo);
           console.log('User info:', result.userInfo);
-          // fetch the inbox messages
-          const inboxResponse = await fetch('/api/inbox');
-          const inboxData = await inboxResponse.json();
-          setInboxMessages(inboxData);
         }
       } catch (err) {
         console.error('Error in setupFeishu:', err);
@@ -56,13 +36,6 @@ function App() {
     setupFeishu();
   }, []);
 
-  // Fetch people data when switching to the network tab
-  useEffect(() => {
-    if (activeTab === 'network') {
-      fetchPeople();
-    }
-  }, [activeTab]);
-
   if (isLoading) {
     return <div className="loading">Loading...</div>;
   }
@@ -71,129 +44,14 @@ function App() {
     return <FeishuRequired />;
   }
 
-  // Handle form submission to add a new person
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    fetch('/api/people/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, nickname }),
-    })
-      .then(response => response.json())
-      .then(() => {
-        setName('');
-        setNickname('');
-        fetchPeople();
-        setShowAddPersonModal(false);
-      });
-  };
-
   const renderContent = () => {
     switch (activeTab) {
       case 'inbox':
-        return (
-          <div className="tab-content">
-            <div className="messages-list">
-              {inboxMessages.map(message => (
-                <div key={message.id} className="message-card">
-                  <div className="message-header">
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      {!message.read && <span className="unread-badge" />}
-                      <span className="message-sender">{message.message_type || 'System'}</span>
-                    </div>
-                    <span className="message-date">
-                      {new Date(message.date).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="message-text">{message.text}</div>
-                </div>
-              ))}
-              {inboxMessages.length === 0 && (
-                <div className="no-messages">
-                  <span className="material-icons" style={{ fontSize: 48, color: '#ccc', marginBottom: 16 }}>
-                    inbox
-                  </span>
-                  <div>Your inbox is empty</div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
+        return <InboxTab />;
       case 'network':
-        return (
-          <div className="tab-content">
-            <div className="network-actions">
-              <button 
-                className="network-action-button"
-                onClick={() => setShowAddPersonModal(true)}
-              >
-                <span className="material-icons">person_add</span>
-                Person
-              </button>
-              <button 
-                className="network-action-button"
-                onClick={() => alert('Coming soon')}
-              >
-                <span className="material-icons">group_add</span>
-                Unit
-              </button>
-            </div>
-            
-            {showAddPersonModal && (
-              <div className="modal-overlay">
-                <div className="modal-content">
-                  <h3>Add New Person</h3>
-                  <form onSubmit={handleSubmit} className="add-person-form">
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Nickname"
-                      value={nickname}
-                      onChange={(e) => setNickname(e.target.value)}
-                      required
-                    />
-                    <div className="modal-buttons">
-                      <button type="submit">Add</button>
-                      <button 
-                        type="button"
-                        onClick={() => setShowAddPersonModal(false)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-            <h3>Recent People</h3>
-            <div className="people-list">
-              {isPeopleLoading ? (
-                <div className="loading-people">Loading people...</div>
-              ) : (
-                <>
-                  {people.map(person => (
-                    <div key={person.id} className="person-card">
-                      <div className="person-info">
-                        <div className="person-name">{person.name}</div>
-                        <div className="person-nickname">{person.nickname}</div>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          </div>
-        );
+        return <NetworkTab />;
       case 'me':
-        return <div className="tab-content">Me Content Coming Soon</div>;
+        return <MeTab />;
       default:
         return null;
     }
@@ -201,7 +59,6 @@ function App() {
 
   return (
     <div className="app">
-
       <main className="main-content">
         {renderContent()}
       </main>
@@ -232,7 +89,7 @@ function App() {
               className="avatar"
               style={{ width: '28px', height: '28px', borderRadius: '50%' }}
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/28';
+                e.target.src = 'https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/web/logo-icon.png';
               }}
             />
           ) : (
