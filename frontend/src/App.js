@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { initFeishuSDK } from './utils/feishu';
 import FeishuRequired from './components/FeishuRequired';
-import InboxTab from './components/InboxTab';
-import NetworkTab from './components/NetworkTab';
-import MeTab from './components/MeTab';
+import InboxTab from './pages/InboxTab';
+import NetworkTab from './pages/NetworkTab';
+import MeTab from './pages/MeTab';
 import { BrowserRouter, Routes, Route } from "react-router";
 import PersonProfile from './pages/PersonProfile';
 

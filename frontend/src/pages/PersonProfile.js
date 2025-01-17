@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useLocation } from 'react-router';
 
 const PersonProfile = () => {
     const { personId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [person, setPerson] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Check if we have navigation history
+    const hasHistory = location.key !== 'default';
+
+    const handleNavigation = () => {
+        if (hasHistory) {
+            navigate(-1);
+        } else {
+            navigate('/');
+        }
+    };
 
     useEffect(() => {
         const fetchPersonDetails = async () => {
@@ -47,10 +59,15 @@ const PersonProfile = () => {
 
     return (
         <div className="profile-page">
-            <div className="profile-header">
+            <div className="profile-header" style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '20px',
+                padding: '20px 0'
+            }}>
                 <button
                     className="back-button"
-                    onClick={() => navigate(-1)}
+                    onClick={handleNavigation}
                     style={{
                         background: 'none',
                         border: 'none',
@@ -58,22 +75,22 @@ const PersonProfile = () => {
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '5px'
+                        gap: '5px',
+                        color: '#666'
                     }}
                 >
-                    <span className="material-icons">arrow_back</span>
-                    Back
+                    <span className="material-icons">
+                        {hasHistory ? 'arrow_back' : 'home'}
+                    </span>
                 </button>
-            </div>
-            <div className="profile-content">
-                <div className="profile-section">
-                    <h2>{person.name}</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <h2 style={{ margin: 0 }}>{person.name}</h2>
                     {person.nickname && (
-                        <div className="profile-nickname">
-                            Nickname: {person.nickname}
-                        </div>
+                        <span style={{ color: '#666' }}>({person.nickname})</span>
                     )}
                 </div>
+            </div>
+            <div className="profile-content">
                 <div className="profile-section">
                     <div className="profile-dates">
                         <div>Created: {new Date(person.created_at).toLocaleDateString()}</div>
