@@ -11,3 +11,40 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Button Styles */
+.btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #1a73e8;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1557b0;
+}
+
+.btn-secondary {
+    background-color: #f1f3f4;
+    color: #3c4043;
+}
+
+.btn-secondary:hover {
+    background-color: #e8eaed;
+}
+
+/* Icon Button Styles */
+.icon-button {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: transparent;
+    color: #3c4043;
+}

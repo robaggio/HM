@@ -137,14 +137,14 @@ const InboxTab = () => {
               {!selectedMessage.read && (
                 <button 
                   onClick={handleMarkAsRead}
-                  style={{ backgroundColor: '#1a73e8', color: 'white' }}
+                  className="btn btn-primary"
                 >
                   Mark as read
                 </button>
               )}
               <button 
                 onClick={handleCloseDialog}
-                style={{ backgroundColor: '#f1f3f4', color: '#3c4043' }}
+                className="btn btn-secondary"
               >
                 Close
               </button>

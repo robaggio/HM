@@ -64,7 +64,7 @@ const NetworkTab = () => {
 
   return (
     <div className="tab-content">
-        <div className="network-actions">
+        <div className="network-actions" style={{ display: 'flex', gap: '10px' }}>
           <button 
             className="network-action-button"
             onClick={() => setShowAddPersonModal(true)}
@@ -114,21 +114,40 @@ const NetworkTab = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ddd',
+                  marginBottom: '10px'
+                }}
               />
               <input
                 type="text"
                 placeholder="Nickname"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
-                required
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ddd',
+                  marginBottom: '20px'
+                }}
               />
-              <div className="modal-buttons">
-                <button type="submit">Add</button>
+              <div className="modal-buttons" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                 <button 
                   type="button"
+                  className="btn btn-secondary"
                   onClick={() => setShowAddPersonModal(false)}
                 >
                   Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="btn btn-primary"
+                >
+                  Add
                 </button>
               </div>
             </form>

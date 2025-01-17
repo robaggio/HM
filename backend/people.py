@@ -16,7 +16,9 @@ def setup_people_routes(router: APIRouter):
                 result = session.run(
                     "MATCH (p:Person) "
                     "RETURN elementId(p) as id, p.name as name, p.nickname as nickname, "
-                    "p.created_at as created_at, p.updated_at as updated_at "
+                    "p.gender as gender, p.birthday as birthday, p.phone as phone, "
+                    "p.email as email, p.city as city, p.resources as resources, p.needs as needs, "
+                    "p.created_at as created_at, p.updated_at as updated_at"
                     "ORDER BY p.created_at DESC LIMIT $limit",
                     limit=limit
                 )
@@ -35,6 +37,8 @@ def setup_people_routes(router: APIRouter):
                     MATCH (p:Person)
                     WHERE elementId(p) = $person_id
                     RETURN elementId(p) as id, p.name as name, p.nickname as nickname,
+                           p.gender as gender, p.birthday as birthday, p.phone as phone,
+                           p.email as email, p.city as city, p.resources as resources, p.needs as needs,
                            p.created_at as created_at, p.updated_at as updated_at
                     """,
                     person_id=person_id
@@ -57,14 +61,30 @@ def setup_people_routes(router: APIRouter):
                     CREATE (n:Person {
                         name: $name,
                         nickname: $nickname,
+                        gender: $gender,
+                        birthday: $birthday,
+                        phone: $phone,
+                        email: $email,
+                        city: $city,
+                        resources: $resources,
+                        needs: $needs,
                         created_at: $now,
                         updated_at: $now
                     })
                     RETURN elementId(n) as id, n.name as name, n.nickname as nickname,
+                            n.gender as gender, n.birthday as birthday, n.phone as phone,
+                            n.email as email, n.city as city, n.resources as resources, n.needs as needs,
                             n.created_at as created_at, n.updated_at as updated_at
                     """,
                     name=person.name,
                     nickname=person.nickname,
+                    gender=person.gender,
+                    birthday=person.birthday,
+                    phone=person.phone,
+                    email=person.email,
+                    city=person.city,
+                    resources=person.resources,
+                    needs=person.needs,
                     now=now
                 )
                 return dict(result.single())
@@ -83,13 +103,29 @@ def setup_people_routes(router: APIRouter):
                     WHERE elementId(n) = $person_id
                     SET n.name = $name,
                         n.nickname = $nickname,
+                        n.gender = $gender,
+                        n.birthday = $birthday,
+                        n.phone = $phone,
+                        n.email = $email,
+                        n.city = $city,
+                        n.resources = $resources,
+                        n.needs = $needs,
                         n.updated_at = $now
                     RETURN elementId(n) as id, n.name as name, n.nickname as nickname,
+                            n.gender as gender, n.birthday as birthday, n.phone as phone,
+                            n.email as email, n.city as city, n.resources as resources, n.needs as needs,
                             n.created_at as created_at, n.updated_at as updated_at
                     """,
                     person_id=person_id,
                     name=person.name,
                     nickname=person.nickname,
+                    gender=person.gender,
+                    birthday=person.birthday,
+                    phone=person.phone,
+                    email=person.email,
+                    city=person.city,
+                    resources=person.resources,
+                    needs=person.needs,
                     now=now
                 )
                 record = result.single()
