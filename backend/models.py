@@ -25,7 +25,7 @@ class Person(BaseModel):
     resources: Optional[str] = None  # what this person can provide
     needs: Optional[str] = None  # what this person needs
     created_at: Optional[str] = None
-    updated_at: Optional[str] = None # ISO format timestamp for last update 
+    updated_at: Optional[str] = None # ISO format timestamp for last update  
 
 class InboxMessage(BaseModel):
     id: str = None  # Neo4j node ID
