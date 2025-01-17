@@ -101,8 +101,8 @@ const PersonProfile = () => {
             <div className="profile-header" style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '20px',
-                padding: '20px 0'
+                gap: '10px',
+                padding: '10px 0'
             }}>
                 <button
                     className="icon-button"
@@ -131,147 +131,239 @@ const PersonProfile = () => {
                     <h2 style={{ margin: 0 }}>Edit Profile</h2>
                 )}
             </div>
-            <div className="profile-content" style={{ padding: '20px' }}>
+            <div className="profile-content">
                 {!isEditMode ? (
                     <div className="profile-section">
-                        <div className="profile-info" style={{ display: 'grid', gap: '15px' }}>
-                            {person.gender && (
-                                <div><strong>Gender: </strong> {person.gender === 'male' ? 'Male' : person.gender === 'female' ? 'Female' : person.gender}</div>
-                            )}
-                            {person.birthday && (
-                                <div><strong>Birthday: </strong> {person.birthday}</div>
-                            )}
-                            {person.phone && (
-                                <div><strong>Phone: </strong> {person.phone}</div>
-                            )}
-                            {person.email && (
-                                <div><strong>Email: </strong> {person.email}</div>
-                            )}
-                            {person.city && (
-                                <div><strong>City: </strong> {person.city}</div>
-                            )}
+                        <div className="section-container">
+                            <h3 className="section-title">Basic</h3>
+                            <div className="section-content">
+                                {person.gender && (
+                                    <div className="info-item">
+                                        <strong>Gender: </strong> 
+                                        {person.gender === 'male' ? 'Male' : person.gender === 'female' ? 'Female' : person.gender}
+                                    </div>
+                                )}
+                                {person.birthday && (
+                                    <div className="info-item">
+                                        <strong>Birthday: </strong> {person.birthday}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className="profile-dates" style={{ marginTop: '20px', color: '#666' }}>
-                            <div>Created: {new Date(person.created_at).toLocaleString()}</div>
-                            {person.updated_at && (
-                                <div>Last Updated: {new Date(person.updated_at).toLocaleString()}</div>
-                            )}
+
+                        <div className="section-container">
+                            <h3 className="section-title">Resources & Needs</h3>
+                            <div className="section-content">
+                                {person.resources && (
+                                    <div className="info-item">
+                                        <strong>Resources: </strong> {person.resources}
+                                    </div>
+                                )}
+                                {person.needs && (
+                                    <div className="info-item">
+                                        <strong>Needs: </strong> {person.needs}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="section-container">
+                            <h3 className="section-title">Contact</h3>
+                            <div className="section-content">
+                                {person.phone && (
+                                    <div className="info-item">
+                                        <strong>Phone: </strong> {person.phone}
+                                    </div>
+                                )}
+                                {person.email && (
+                                    <div className="info-item">
+                                        <strong>Email: </strong> {person.email}
+                                    </div>
+                                )}
+                                {person.city && (
+                                    <div className="info-item">
+                                        <strong>City: </strong> {person.city}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="section-container">
+                            <h3 className="section-title">Maintain</h3>
+                            <div className="section-content maintain-info">
+                                <div className="info-item">
+                                    <strong>Created: </strong> {new Date(person.created_at).toLocaleString()}
+                                </div>
+                                {person.updated_at && (
+                                    <div className="info-item">
+                                        <strong>Last Updated: </strong> {new Date(person.updated_at).toLocaleString()}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px', maxWidth: '500px' }}>
-                        <div style={{ display: 'grid', gap: '10px' }}>
-                            <label>
-                                Name:
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    required
-                                    style={{
-                                        width: '70%',
-                                        padding: '8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #ddd'
-                                    }}
-                                />
-                            </label>
-                            <label>
-                                Nickname:
-                                <input
-                                    type="text"
-                                    name="nickname"
-                                    value={formData.nickname || ''}
-                                    onChange={handleInputChange}
-                                    style={{
-                                        width: '70%',
-                                        padding: '8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #ddd'
-                                    }}
-                                />
-                            </label>
-                            <label>
-                                Gender:
-                                <select
-                                    name="gender"
-                                    value={formData.gender || ''}
-                                    onChange={handleInputChange}
-                                    style={{
-                                        width: '50%',
-                                        padding: '8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #ddd'
-                                    }}
-                                >
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </label>
-                            <label>
-                                Birthday:
-                                <input
-                                    type="date"
-                                    name="birthday"
-                                    value={formData.birthday || ''}
-                                    onChange={handleInputChange}
-                                    style={{
-                                        width: '70%',
-                                        padding: '8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #ddd'
-                                    }}
-                                />
-                            </label>
-                            <label>
-                                Phone:
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone || ''}
-                                    onChange={handleInputChange}
-                                    style={{
-                                        width: '70%',
-                                        padding: '8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #ddd'
-                                    }}
-                                />
-                            </label>
-                            <label>
-                                Email:
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email || ''}
-                                    onChange={handleInputChange}
-                                    style={{
-                                        width: '70%',
-                                        padding: '8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #ddd'
-                                    }}
-                                />
-                            </label>
-                            <label>
-                                City:
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={formData.city || ''}
-                                    onChange={handleInputChange}
-                                    style={{
-                                        width: '70%',
-                                        padding: '8px',
-                                        borderRadius: '4px',
-                                        border: '1px solid #ddd'
-                                    }}
-                                />
-                            </label>
+                        <div className="form-section">
+                            <h3 className="section-title">Basic</h3>
+                            <div style={{ display: 'grid', gap: '10px' }}>
+                                <label>
+                                    Name:
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        required
+                                        style={{
+                                            width: '70%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd'
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    Nickname:
+                                    <input
+                                        type="text"
+                                        name="nickname"
+                                        value={formData.nickname || ''}
+                                        onChange={handleInputChange}
+                                        style={{
+                                            width: '70%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd'
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    Gender:
+                                    <select
+                                        name="gender"
+                                        value={formData.gender || ''}
+                                        onChange={handleInputChange}
+                                        style={{
+                                            width: '50%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd'
+                                        }}
+                                    >
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    Birthday:
+                                    <input
+                                        type="date"
+                                        name="birthday"
+                                        value={formData.birthday || ''}
+                                        onChange={handleInputChange}
+                                        style={{
+                                            width: '70%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd'
+                                        }}
+                                    />
+                                </label>
+                            </div>
                         </div>
+
+                        <div className="form-section">
+                            <h3 className="section-title">Resources & Needs</h3>
+                            <div style={{ display: 'grid', gap: '10px' }}>
+                                <label>
+                                    Resources:
+                                    <textarea
+                                        name="resources"
+                                        value={formData.resources || ''}
+                                        onChange={handleInputChange}
+                                        placeholder="What can this person provide?"
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd',
+                                            minHeight: '80px'
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    Needs:
+                                    <textarea
+                                        name="needs"
+                                        value={formData.needs || ''}
+                                        onChange={handleInputChange}
+                                        placeholder="What does this person need?"
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd',
+                                            minHeight: '80px'
+                                        }}
+                                    />
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="form-section">
+                            <h3 className="section-title">Contact</h3>
+                            <div style={{ display: 'grid', gap: '10px' }}>
+                                <label>
+                                    Phone:
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone || ''}
+                                        onChange={handleInputChange}
+                                        style={{
+                                            width: '70%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd'
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    Email:
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email || ''}
+                                        onChange={handleInputChange}
+                                        style={{
+                                            width: '70%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd'
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    City:
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        value={formData.city || ''}
+                                        onChange={handleInputChange}
+                                        style={{
+                                            width: '70%',
+                                            padding: '8px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #ddd'
+                                        }}
+                                    />
+                                </label>
+                            </div>
+                        </div>
+
                         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                             <button
                                 type="button"

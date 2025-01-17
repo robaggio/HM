@@ -18,7 +18,7 @@ def setup_people_routes(router: APIRouter):
                     "RETURN elementId(p) as id, p.name as name, p.nickname as nickname, "
                     "p.gender as gender, p.birthday as birthday, p.phone as phone, "
                     "p.email as email, p.city as city, p.resources as resources, p.needs as needs, "
-                    "p.created_at as created_at, p.updated_at as updated_at"
+                    "p.created_at as created_at, p.updated_at as updated_at "
                     "ORDER BY p.created_at DESC LIMIT $limit",
                     limit=limit
                 )
