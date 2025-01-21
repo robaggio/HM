@@ -128,7 +128,7 @@ const PersonProfile = () => {
                         </button>
                     </>
                 ) : (
-                    <h2 style={{ margin: 0 }}>Edit Profile</h2>
+                    <h2 style={{ margin: 0 }}>Edit Person</h2>
                 )}
             </div>
             <div className="profile-content">
@@ -203,10 +203,10 @@ const PersonProfile = () => {
                         </div>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px', maxWidth: '500px' }}>
+                    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '10px', maxWidth: '500px' }}>
                         <div className="form-section">
                             <h3 className="section-title">Basic</h3>
-                            <div style={{ display: 'grid', gap: '10px' }}>
+                            <div style={{ display: 'grid', gap: '5px' }}>
                                 <label>
                                     Name:
                                     <input
@@ -277,7 +277,7 @@ const PersonProfile = () => {
 
                         <div className="form-section">
                             <h3 className="section-title">Resources & Needs</h3>
-                            <div style={{ display: 'grid', gap: '10px' }}>
+                            <div style={{ display: 'grid', gap: '5px' }}>
                                 <label>
                                     Resources:
                                     <textarea
@@ -286,11 +286,11 @@ const PersonProfile = () => {
                                         onChange={handleInputChange}
                                         placeholder="What can this person provide?"
                                         style={{
-                                            width: '100%',
+                                            width: '90%',
                                             padding: '8px',
                                             borderRadius: '4px',
                                             border: '1px solid #ddd',
-                                            minHeight: '80px'
+                                            minHeight: '40px'
                                         }}
                                     />
                                 </label>
@@ -302,11 +302,11 @@ const PersonProfile = () => {
                                         onChange={handleInputChange}
                                         placeholder="What does this person need?"
                                         style={{
-                                            width: '100%',
+                                            width: '90%',
                                             padding: '8px',
                                             borderRadius: '4px',
                                             border: '1px solid #ddd',
-                                            minHeight: '80px'
+                                            minHeight: '40px'
                                         }}
                                     />
                                 </label>
@@ -315,7 +315,7 @@ const PersonProfile = () => {
 
                         <div className="form-section">
                             <h3 className="section-title">Contact</h3>
-                            <div style={{ display: 'grid', gap: '10px' }}>
+                            <div style={{ display: 'grid', gap: '5px' }}>
                                 <label>
                                     Phone:
                                     <input
